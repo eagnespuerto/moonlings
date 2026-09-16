@@ -870,7 +870,8 @@ function refreshArt(m){
 let debris=[];
 function seedDebris(){
   debris=[];debrisLayer.textContent="";
-  for(let i=0;i<CFG.DEBRIS_MAX;i++)spawnDebris(Math.random()*1);
+  // the first few are already drifting, so there is always something to mine right away
+  for(let i=0;i<CFG.DEBRIS_MAX;i++)spawnDebris(i>=5);
 }
 function spawnDebris(delay){
   const d={
@@ -1444,6 +1445,8 @@ function startGame(state){
   S=state;sel=null;drag=null;
   const idle=applyIdle();
   buildScene();renderAll();
+  // paint one frame immediately so the system is correct before the render loop starts
+  computeHarmony();positionMoons();updateDebris(0);updateDanger();
   if(idle){
     const bits=[`away ${humanTime(idle.t)}`,`+${Math.floor(idle.dust)} dust`];
     if(idle.grew)bits.push(`${idle.grew} moon${idle.grew>1?"s":""} grew`);
